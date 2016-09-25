@@ -1,0 +1,53 @@
+{
+  "name": "web-midi-sample",
+  "version": "1.0.0",
+  "description": "angular2 UI + WebMidiAPI",
+  "main": "index.html",
+  "scripts": {
+    "webpack": "webpack --config webpack.config.js",
+    "lite": "lite-server -c bs-config.json",
+    "start": "npm run webpack && npm run lite",
+    "ngc": "ngc -p ./tsconfig.aot.json",
+    "start:aot": "npm run ngc && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "reository": {
+    "type": "git",
+    "url": "git+https://github.com/KadoTomohiro/web-midi-sampke"
+  },
+  "keywords": [
+    "angular2",
+    "AoT",
+    "webpack",
+    "WebMidiAPI"
+  ],
+  "author": "KadoTomohiro",
+  "license": "MIT",
+  "dependencies": {
+    "@angular/common": "^2.0.0",
+    "@angular/compiler": "^2.0.0",
+    "@angular/compiler-cli": "^0.6.2",
+    "@angular/core": "^2.0.0",
+    "@angular/forms": "^2.0.0",
+    "@angular/http": "^2.0.0",
+    "@angular/platform-browser": "^2.0.0",
+    "@angular/platform-browser-dynamic": "^2.0.0",
+    "@angular/platform-server": "^2.0.1",
+    "@angular/router": "^3.0.0",
+    "core-js": "^2.4.1",
+    "reflect-metadata": "^0.1.8",
+    "rxjs": "^5.0.0-beta.12",
+    "zone.js": "^0.6.23"
+  },
+  "devDependencies": {
+    "@types/es6-shim": "0.0.31",
+    "@types/node": "^6.0.38",
+    "@types/webmidi": "0.0.30",
+    "lite-server": "^2.2.2",
+    "ts-loader": "^0.8.2",
+    "tslint": "^3.15.1",
+    "tslint-loader": "^2.1.5",
+    "typescript": "^2.0.0",
+    "webpack": "^2.1.0-beta.22"
+  }
+}

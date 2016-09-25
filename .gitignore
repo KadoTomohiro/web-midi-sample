@@ -1,0 +1,9 @@
+# パッケージ
+node_modules
+
+# 生成物
+bin
+*.ngfactory.ts
+
+# 開発環境
+.idea
