@@ -4,6 +4,9 @@ import {Component} from '@angular/core';
   selector: 'my-app',
   template: `
   <h1>{{title}}</h1>
+  <p>midi command: 0x{{midiCmd}}</p>
+  <p>note number: {{noteNumber}}</p>
+  <p>velocity: {{velocity}}</p>
   `,
 })
 export class AppComponent {
@@ -13,12 +16,23 @@ export class AppComponent {
   outputs:any[] = [];
   navigator: Navigator = window.navigator;
 
+  midiCmd: string;
+  noteNumber: number;
+  velocity: number;
+
+  private MIDI_MESSAGE_INDEX: any = {
+    MIDI_COMMAND: 0,
+    NOTE_NUMBER: 1,
+    VELOCITY: 2
+  };
+
+  // TODO MID Accessに関する処理をサービス化して外に出す?
   constructor() {
 
     this.navigator.requestMIDIAccess().then(this.onMIDISuccess);
   }
 
-  onMIDISuccess(midi: WebMidi.MIDIOptions) {
+  onMIDISuccess(midi: WebMidi.MIDIAccess) {
     var it = midi.inputs.values();
     for (var o = it.next(); !o.done; o = it.next()) {
       this.inputs.push(o.value);
@@ -33,10 +47,10 @@ export class AppComponent {
   }
 
   onMIDIEvent(e) {
+
     let midiMessages = e.data;
-    let cmd = midiMessages[0];
-    let note = midiMessages[1];
-    let velocity = midiMessages[2];
-    console.log(`command:${cmd.toString(16)}, note number:${note}, velocity:${velocity}`);
+    this.midiCmd = midiMessages[this.MIDI_MESSAGE_INDEX.MIDI_COMMAND].toString(16);
+    this.noteNumber = midiMessages[this.MIDI_MESSAGE_INDEX.NOTE_NUMBER];
+    this.velocity = midiMessages[this.MIDI_MESSAGE_INDEX.VELOCITY];
   }
 }
