@@ -1,5 +1,6 @@
 # パッケージ
 node_modules
+npm-debug.log
 
 # 生成物
 bin
