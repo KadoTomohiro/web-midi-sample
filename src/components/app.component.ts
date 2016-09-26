@@ -33,20 +33,20 @@ export class AppComponent {
   }
 
   onMIDISuccess(midi: WebMidi.MIDIAccess) {
-    var it = midi.inputs.values();
-    for (var o = it.next(); !o.done; o = it.next()) {
-      this.inputs.push(o.value);
+    let it = midi.inputs.values();
+    for (let i = it.next(); !i.done; i = it.next()) {
+      this.inputs.push(i.value);
     }
-    var ot = midi.outputs.values();
-    for (var o = ot.next(); !o.done; o = ot.next()) {
+    let ot = midi.outputs.values();
+    for (let o = ot.next(); !o.done; o = ot.next()) {
       this.outputs.push(o.value);
     }
-    for (var cnt = 0; cnt < this.inputs.length; cnt++) {
+    for (let cnt = 0; cnt < this.inputs.length; cnt++) {
       this.inputs[cnt].onmidimessage = this.onMIDIEvent;
     }
   }
 
-  onMIDIEvent(e) {
+  onMIDIEvent(e: WebMidi.MIDIMessageEvent) {
 
     let midiMessages = e.data;
     this.midiCmd = midiMessages[this.MIDI_MESSAGE_INDEX.MIDI_COMMAND].toString(16);
