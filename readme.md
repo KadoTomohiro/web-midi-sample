@@ -2,4 +2,9 @@
 
 WebMidiAPIをAngular2 Appで試す。
 
-まだ動きません
+## 実行
+midiデバイスをマシンに接続 
+```bash
+npm install
+start:aot
+```
