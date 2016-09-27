@@ -22,7 +22,6 @@ export class AppComponent {
     }
 
     onMidiMessage(e: WebMidi.MIDIMessageEvent): void {
-        console.log('onMidiMessage!', e.data);
         let midiMessages = e.data;
         this.midiCmd = midiMessages[0].toString(16);
         this.noteNumber = midiMessages[1];
