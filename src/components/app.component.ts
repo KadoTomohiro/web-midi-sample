@@ -1,4 +1,5 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectorRef} from '@angular/core';
+import {MidiService} from '../services/midiService';
 
 @Component({
     selector: 'my-app',
@@ -10,43 +11,25 @@ import {Component} from '@angular/core';
   `,
 })
 export class AppComponent {
-    title: string = 'Hello World!';
+    title: string = 'Midi Sample';
 
-    inputs: WebMidi.MIDIInput[];
-    outputs: WebMidi.MIDIOutput[];
-    navigator: Navigator = window.navigator;
+    midiCmd: string;
+    noteNumber: number;
+    velocity: number;
 
-    midiCmd: string = '';
-    noteNumber: number = 0;
-    velocity: number = 0;
+    constructor(private midiService: MidiService, private ref: ChangeDetectorRef) {
+        this.midiService.midiIn.subscribe((e: WebMidi.MIDIMessageEvent) => this.onMidiMessage(e));
+    }
 
+    onMidiMessage(e: WebMidi.MIDIMessageEvent): void {
+        console.log('onMidiMessage!', e.data);
+        let midiMessages = e.data;
+        this.midiCmd = midiMessages[0].toString(16);
+        this.noteNumber = midiMessages[1];
+        this.velocity = midiMessages[2];
 
-    // TODO MID Accessに関する処理をサービス化して外に出す?
-    constructor() {
-        this.inputs = [];
-        this.outputs = [];
-        this.navigator.requestMIDIAccess().then((midi: WebMidi.MIDIAccess) => {
-
-            console.log(this);
-
-            let it = midi.inputs.values();
-            for (let i = it.next(); !i.done; i = it.next()) {
-                this.inputs.push(i.value);
-            }
-            let ot = midi.outputs.values();
-            for (let o = ot.next(); !o.done; o = ot.next()) {
-                this.outputs.push(o.value);
-            }
-            for (let cnt = 0; cnt < this.inputs.length; cnt++) {
-                this.inputs[cnt].onmidimessage = (e: WebMidi.MIDIMessageEvent) => {
-                    console.log(this);
-                    let midiMessages = e.data;
-                    this.midiCmd = midiMessages[0].toString(16);
-                    this.noteNumber = midiMessages[1];
-                    this.velocity = midiMessages[2];
-                };
-            }
-        });
+        // この処理ではバインディングされないため変更を通知
+        this.ref.detectChanges();
     }
 
 }
