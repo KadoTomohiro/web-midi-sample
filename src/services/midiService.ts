@@ -4,7 +4,10 @@ import {NavigatorRef} from './navigatorRef';
 @Injectable()
 export class MidiService {
     @Output() midiIn: EventEmitter<any>;
-    public inputs: Map<string, WebMidi.MIDIInput>;
+    private inputs: WebMidi.MIDIInputMap;
+    private outputs: WebMidi.MIDIOutputMap;
+
+    public onInit: Promise<WebMidi.MIDIAccess>;
 
     constructor(private navRef: NavigatorRef) {
 
@@ -12,13 +15,15 @@ export class MidiService {
         navRef.navigator.requestMIDIAccess().then((midi: WebMidi.MIDIAccess) => {
 
             this.inputs = midi.inputs;
-
             this.inputs.forEach(( input: WebMidi.MIDIInput) => {
                 input.onmidimessage = (e: WebMidi.MIDIMessageEvent) => this.midiIn.emit(e);
             });
 
-            // midiOutputはmidi.outputsで取得できる
+            this.outputs = midi.outputs;
+
         });
+
+
     }
 
 
