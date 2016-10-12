@@ -25,6 +25,49 @@ export class MidiService {
 
 
     }
+}
+
+
+export class MidiMessage {
+
+    private _message: Uint8Array;
+
+
+    static readonly NOTE_ON = 0x9;
+    static readonly NOTE_OFF = 0x8;
+
+    constructor(message: Uint8Array) {
+        this._message = message;
+    }
+
+    get status(): number {
+        return this._message[0];
+    }
+
+    get statusNo(): number {
+        // ステータスバイトの上位4bitがチャンネルNo
+        // ex) 0x90 -> 1001 0000
+        return (this.status & 0xf0) >> 4;
+    }
+
+    get channelNo(): number {
+        // ステータスバイトの下位4bitがチャンネルNo
+        // ex) 0x90 -> 1001 0000
+        return this.status & 0xf;
+    }
+
+    get noteNo(): number {
+        return this._message[1];
+    }
+
+    get velocity(): number {
+        return this._message[2];
+    }
+
+    get frequency(): number {
+        return 440.0 * Math.pow(2.0, (this.noteNo - 69.0) / 12.0);
+    }
+
 
 
 }

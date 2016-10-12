@@ -1,34 +1,64 @@
 import {Component, ChangeDetectorRef} from '@angular/core';
-import {MidiService} from '../services/midiService';
+import {MidiService, MidiMessage} from '../services/midiService';
+import {AudioService} from '../services/audioService';
 
 @Component({
     selector: 'my-app',
     template: `
   <h1>{{title}}</h1>
-  <p>midi command: 0x{{midiCmd}}</p>
+  <p>midi status: 0x{{midiStatus}}</p>
   <p>note number: {{noteNumber}}</p>
   <p>velocity: {{velocity}}</p>
+  <p>frequency: {{frequency}}Hz</p>
+  <select name="" id="" [(ngModel)]="oscType" (change)="setOscType($event.target.value)">
+    <option *ngFor="let type of oscillatorType" [value]="type">{{type}}</option>
+  </select>
   `,
 })
 export class AppComponent {
     title: string = 'Midi Sample';
 
-    midiCmd: string;
+    midiStatus: string;
     noteNumber: number;
     velocity: number;
+    frequency: number;
+    oscType: string;
 
-    constructor(private midiService: MidiService, private ref: ChangeDetectorRef) {
+    oscillatorType: Array<string>;
+
+    constructor(private midiService: MidiService, private audioService: AudioService, private ref: ChangeDetectorRef) {
+
+
         this.midiService.midiIn.subscribe((e: WebMidi.MIDIMessageEvent) => this.onMidiMessage(e));
+
+        this.oscillatorType = audioService.OscillatorType;
+        this.oscType = this.audioService.oscType;
+
     }
 
     onMidiMessage(e: WebMidi.MIDIMessageEvent): void {
-        let midiMessages = e.data;
-        this.midiCmd = midiMessages[0].toString(16);
-        this.noteNumber = midiMessages[1];
-        this.velocity = midiMessages[2];
+        let message = new MidiMessage(e.data);
+        this.midiStatus = message.status.toString(16);
+        this.noteNumber = message.noteNo;
+        this.velocity = message.velocity;
+        this.frequency = message.frequency;
+
+        if (message.statusNo === MidiMessage.NOTE_ON) {
+            this.audioService.audioOn(message);
+        }
+
+        if (message.statusNo === MidiMessage.NOTE_OFF) {
+            this.audioService.audioOff(message);
+        }
 
         // この処理ではバインディングされないため変更を通知
         this.ref.detectChanges();
     }
 
+    setOscType(type) {
+        this.audioService.oscType = type;
+    }
+
+
 }
+
