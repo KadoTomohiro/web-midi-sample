@@ -5,14 +5,19 @@ Injectable();
 export class AudioService {
 
     private ctx: AudioContext;
-
+    private vcos: Map<number, OscillatorNode>;
+    private analyser: AnalyserNode;
     oscType: string;
-    vcos: Map<number, OscillatorNode>;
 
     constructor () {
         this.ctx = new AudioContext();
         this.vcos = new Map<number, OscillatorNode>();
+        this.analyser = this.ctx.createAnalyser();
+
+        this.analyser.connect(this.ctx.destination);
+
         this.oscType = this.OscillatorType[0];
+
     }
 
     OscillatorType = [
@@ -25,7 +30,8 @@ export class AudioService {
     public audioOn(msg: MidiMessage) {
 
         let vco = this.ctx.createOscillator();
-        vco.connect(this.ctx.destination);
+        // vco.connect(this.ctx.destination);
+        vco.connect(this.analyser);
         vco.frequency.value = msg.frequency;
         vco.type = this.oscType;
 
@@ -45,5 +51,18 @@ export class AudioService {
         return (msg.channelNo << 8) + msg.noteNo;
     }
 
+    public getTimeWave(): Uint8Array {
+        let times = new Uint8Array(this.analyser.fftSize);
+        this.analyser.getByteTimeDomainData(times);
+
+        return times;
+    }
+
+    a() {
+        var context = new AudioContext();
+
+    }
+
 
 }
+

@@ -12,7 +12,7 @@ export class MidiService {
     constructor(private navRef: NavigatorRef) {
 
         this.midiIn = new EventEmitter();
-        navRef.navigator.requestMIDIAccess().then((midi: WebMidi.MIDIAccess) => {
+        this.onInit = navRef.navigator.requestMIDIAccess().then((midi: WebMidi.MIDIAccess) => {
 
             this.inputs = midi.inputs;
             this.inputs.forEach(( input: WebMidi.MIDIInput) => {
@@ -20,6 +20,8 @@ export class MidiService {
             });
 
             this.outputs = midi.outputs;
+
+            return midi;
 
         });
 
