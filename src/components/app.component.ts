@@ -49,7 +49,6 @@ export class AppComponent implements OnInit{
         };
 
         this.interval = Observable.interval(50);
-
     }
 
     ngOnInit() {
@@ -103,9 +102,5 @@ export class AppComponent implements OnInit{
     setOscType(type) {
         this.audioService.oscType = type;
     }
-
-
-
-
 }
 

@@ -58,11 +58,6 @@ export class AudioService {
         return times;
     }
 
-    a() {
-        var context = new AudioContext();
-
-    }
-
 
 }
 
