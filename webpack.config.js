@@ -4,7 +4,7 @@ let path = require('path');
 module.exports = {
   entry: {
     'bootstrap': './src/main.ts',
-    'bootstrap.aot': './src/main.aot.ts'
+    // 'bootstrap.aot': './src/main.aot.ts'
   },
 
   output: {

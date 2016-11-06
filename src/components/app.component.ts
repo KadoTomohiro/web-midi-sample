@@ -12,14 +12,14 @@ import { Observable } from 'rxjs';
   <p>note number: {{noteNumber}}</p>
   <p>velocity: {{velocity}}</p>
   <p>frequency: {{frequency}}Hz</p>
-  <select name="" id="" [(ngModel)]="oscType" (change)="setOscType($event.target.value)">
-    <option *ngFor="let type of oscillatorType" [value]="type">{{type}}</option>
-  </select>
+  <!--<select name="" id="" [(ngModel)]="oscType" (change)="setOscType($event.target.value)">-->
+    <!--<option *ngFor="let type of oscillatorType" [value]="type">{{type}}</option>-->
+  <!--</select>-->
   
   <canvas #timeWave [attr.width]="_size.width" [attr.height]="_size.height"></canvas>
   `,
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
     title: string = 'Midi Sample';
 
     midiStatus: string;
@@ -29,9 +29,9 @@ export class AppComponent implements OnInit{
     oscType: string;
 
     @ViewChild('timeWave') timeWave: ElementRef;
-    private _size :{width: number, height: number};
+    private _size: {width: number, height: number};
 
-    interval;
+    interval: Observable<any>;
 
     oscillatorType: Array<string>;
 
@@ -45,7 +45,7 @@ export class AppComponent implements OnInit{
 
         this._size = {
             width: 500,
-            height:200
+            height: 200
         };
 
         this.interval = Observable.interval(50);
@@ -64,9 +64,9 @@ export class AppComponent implements OnInit{
             canvasContext.beginPath();
 
 
-            for (var i = 0, len = times.length; i < len; i++) {
-                var x = (i / len) * canvas.width;
-                var y = (1 - (times[i] / 255)) * canvas.height;
+            for (let i = 0, len = times.length; i < len; i++) {
+                let x = (i / len) * canvas.width;
+                let y = (1 - (times[i] / 255)) * canvas.height;
                 if (i === 0) {
                     // console.log('moveTo');
                     canvasContext.moveTo(x, y);
@@ -96,11 +96,21 @@ export class AppComponent implements OnInit{
         }
 
         // この処理ではバインディングされないため変更を通知
-        this.ref.detectChanges();
+        // this.ref.detectChanges();
     }
 
+<<<<<<< Updated upstream
     setOscType(type) {
         this.audioService.oscType = type;
     }
+=======
+    // setOscType(type):void {
+    //     this.audioService.oscType = type;
+    // }
+
+
+
+
+>>>>>>> Stashed changes
 }
 

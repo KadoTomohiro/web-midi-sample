@@ -4,9 +4,9 @@
   "description": "angular2 UI + WebMidiAPI",
   "main": "index.html",
   "scripts": {
-    "webpack": "webpack --config webpack.config.js",
+    "webpack": "webpack --watch --config webpack.config.js",
     "lite": "lite-server -c bs-config.json",
-    "start": "npm run webpack && npm run lite",
+    "start": "concurrently \"npm run webpack\" \"npm run lite\"",
     "ngc": "ngc -p ./tsconfig.aot.json",
     "start:aot": "npm run ngc && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -43,6 +43,7 @@
     "@types/es6-shim": "0.0.31",
     "@types/node": "^6.0.38",
     "@types/webmidi": "0.0.30",
+    "concurrently": "^3.1.0",
     "lite-server": "^2.2.2",
     "ts-loader": "^0.8.2",
     "tslint": "^3.15.1",
