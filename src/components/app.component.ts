@@ -44,7 +44,7 @@ export class AppComponent implements OnInit {
         this.oscType = this.audioService.oscType;
 
         this._size = {
-            width: 500,
+            width: 1000,
             height: 200
         };
 
@@ -99,18 +99,9 @@ export class AppComponent implements OnInit {
         // this.ref.detectChanges();
     }
 
-<<<<<<< Updated upstream
-    setOscType(type) {
-        this.audioService.oscType = type;
-    }
-=======
     // setOscType(type):void {
     //     this.audioService.oscType = type;
     // }
 
-
-
-
->>>>>>> Stashed changes
 }
 
