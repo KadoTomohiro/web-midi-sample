@@ -36,16 +36,55 @@ export class AudioService {
 
         algorithm.start(0);
 
+        let now = this.ctx.currentTime;
+        let m_attack = 0, m_decay = 0.5, m_sustain = 0.3;
+        let c_attack = 0.4, c_decay = 0.3, c_sustain = 0.7;
+
+        let modulatorRootValue = algorithm.modulatorGain.gain.value;  // Attackの目標値をセット
+        algorithm.modulatorGain.gain.cancelScheduledValues(0);      // スケジュールを全て解除
+        algorithm.modulatorGain.gain.setValueAtTime(0.0, now);      // 今時点を音の出始めとする
+        algorithm.modulatorGain.gain.linearRampToValueAtTime(modulatorRootValue, now + m_attack);
+// ▲ rootValue0までm_attack秒かけて直線的に変化
+        algorithm.modulatorGain.gain.linearRampToValueAtTime(m_sustain * modulatorRootValue, now + m_attack + m_decay);
+// ▲ m_sustain * modulatorRootValueまでm_attack+m_decay秒かけて直線的に変化
+
+        let carrierRootValue = algorithm.carrierGain.gain.value;      // Attackの目標値をセット
+        algorithm.carrierGain.gain.cancelScheduledValues(0);        // スケジュールを全て解除
+        algorithm.carrierGain.gain.setValueAtTime(0.0, now);        // 今時点を音の出始めとする
+        algorithm.carrierGain.gain.linearRampToValueAtTime(carrierRootValue, now + c_attack);
+// ▲ rootValue0までc_attack秒かけて直線的に変化
+        algorithm.carrierGain.gain.linearRampToValueAtTime(c_sustain * carrierRootValue, now + c_attack + c_decay);
+// ▲ c_sustain * carrierRootValueまでc_attack+c_decay秒かけて直線的に変化
+
         this.algorithms.set(this.getFrequencyKey(msg), algorithm);
 
-        console.log('start');
     }
 
     public audioOff(msg: MidiMessage) {
 
         let algorithm: Algorithm = this.algorithms.get(this.getFrequencyKey(msg));
-        if (algorithm) algorithm.stop(0);
-        console.log('stop');
+        if (!algorithm) return;
+
+        let now = this.ctx.currentTime;
+        let m_release = 0.5;
+        let c_release = 0.4;
+        let modulatorRootValue = algorithm.modulatorGain.gain.value;
+        algorithm.modulatorGain.gain.cancelScheduledValues(0);
+        algorithm.modulatorGain.gain.setValueAtTime(modulatorRootValue, now);
+        algorithm.modulatorGain.gain.linearRampToValueAtTime(modulatorRootValue, now);
+        algorithm.modulatorGain.gain.linearRampToValueAtTime(0.0, now + m_release);
+
+        let carrierRootValue = algorithm.carrierGain.gain.value;
+        algorithm.carrierGain.gain.cancelScheduledValues(0);
+        algorithm.carrierGain.gain.setValueAtTime(carrierRootValue, now);
+        algorithm.carrierGain.gain.linearRampToValueAtTime(carrierRootValue, now);
+        algorithm.carrierGain.gain.linearRampToValueAtTime(0.0, now + c_release);
+
+        let release = m_release;
+        if (release < c_release) release = c_release;
+
+
+        algorithm.stop(now + release);
     }
 
     private getFrequencyKey(msg: MidiMessage): number {
@@ -72,40 +111,22 @@ export class AudioService {
         algorithm.feedbackGain.connect(algorithm.modulator.frequency);
 
 
-        algorithm.carrier.frequency.value = msg.frequency;
+        // algorithm.modulator.type = this.oscType;
+        algorithm.carrier.type = this.oscType;
 
-        var presetList = {
+
+        let presetList = {
             name: "Elec.Piano1",
             freqRatio: [1, 9],
             feedback: 0,
             outRatio: [99, 55]
         };
-        var freq = algorithm.carrier.frequency.value ;
+        let freq = msg.frequency;
         algorithm.modulator.frequency.value = presetList.freqRatio[1] * freq;
         algorithm.carrier.frequency.value = presetList.freqRatio[0] * freq; // 音階を変える
         algorithm.feedbackGain.gain.value = presetList.feedback;
         algorithm.modulatorGain.gain.value = (presetList.outRatio[1] / 100) * 1024;
         algorithm.carrierGain.gain.value = (presetList.outRatio[0] / 100);
-
-        var now = this.ctx.currentTime;
-        var m_attack = 0, m_decay = 0.5, m_sustain = 0.3, m_release = 0.5;
-        var c_attack = 0.4, c_decay = 0.3, c_sustain = 0.7, c_release = 0.4;
-
-        var modulatorRootValue = algorithm.modulatorGain.gain.value;  // Attackの目標値をセット
-        algorithm.modulatorGain.gain.cancelScheduledValues(0);      // スケジュールを全て解除
-        algorithm.modulatorGain.gain.setValueAtTime(0.0, now);      // 今時点を音の出始めとする
-        algorithm.modulatorGain.gain.linearRampToValueAtTime(modulatorRootValue, now + m_attack);
-// ▲ rootValue0までm_attack秒かけて直線的に変化
-        algorithm.modulatorGain.gain.linearRampToValueAtTime(m_sustain * modulatorRootValue, now + m_attack + m_decay);
-// ▲ m_sustain * modulatorRootValueまでm_attack+m_decay秒かけて直線的に変化
-
-        var carrierRootValue = algorithm.carrierGain.gain.value;      // Attackの目標値をセット
-        algorithm.carrierGain.gain.cancelScheduledValues(0);        // スケジュールを全て解除
-        algorithm.carrierGain.gain.setValueAtTime(0.0, now);        // 今時点を音の出始めとする
-        algorithm.carrierGain.gain.linearRampToValueAtTime(carrierRootValue, now + c_attack);
-// ▲ rootValue0までc_attack秒かけて直線的に変化
-        algorithm.carrierGain.gain.linearRampToValueAtTime(c_sustain * carrierRootValue, now + c_attack + c_decay);
-// ▲ c_sustain * carrierRootValueまでc_attack+c_decay秒かけて直線的に変化
 
         return algorithm;
 

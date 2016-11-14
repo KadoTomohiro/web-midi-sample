@@ -12,9 +12,9 @@ import { Observable } from 'rxjs';
   <p>note number: {{noteNumber}}</p>
   <p>velocity: {{velocity}}</p>
   <p>frequency: {{frequency}}Hz</p>
-  <!--<select name="" id="" [(ngModel)]="oscType" (change)="setOscType($event.target.value)">-->
-    <!--<option *ngFor="let type of oscillatorType" [value]="type">{{type}}</option>-->
-  <!--</select>-->
+  <select name="" id="" [(ngModel)]="oscType" (change)="setOscType($event.target.value)">
+    <option *ngFor="let type of oscillatorType" [value]="type">{{type}}</option>
+  </select>
   
   <canvas #timeWave [attr.width]="_size.width" [attr.height]="_size.height"></canvas>
   `,
@@ -85,7 +85,7 @@ export class AppComponent implements OnInit {
         this.midiStatus = message.status.toString(16);
         this.noteNumber = message.noteNo;
         this.velocity = message.velocity;
-        this.frequency = message.frequency;
+        this.frequency = Math.round(message.frequency * 100)/100;
 
         if (message.statusNo === MidiMessage.NOTE_ON) {
             this.audioService.audioOn(message);
@@ -99,9 +99,9 @@ export class AppComponent implements OnInit {
         // this.ref.detectChanges();
     }
 
-    // setOscType(type):void {
-    //     this.audioService.oscType = type;
-    // }
+    setOscType(type):void {
+        this.audioService.oscType = type;
+    }
 
 }
 
