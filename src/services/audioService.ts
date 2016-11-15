@@ -5,30 +5,28 @@ Injectable();
 export class AudioService {
 
     private ctx: AudioContext;
-    // private vcos: Map<number, OscillatorNode>;
-    private algorithms: Map<number, any>;
+    private algorithms: Map<number, Algorithm>;
 
     private analyser: AnalyserNode;
-    oscType: string;
+    // oscType: string;
 
     constructor() {
         this.ctx = new AudioContext();
-        // this.vcos = new Map<number, OscillatorNode>();
-        this.algorithms = new Map<number, any>();
+        this.algorithms = new Map<number, Algorithm>();
         this.analyser = this.ctx.createAnalyser();
 
         this.analyser.connect(this.ctx.destination);
 
-        this.oscType = this.OscillatorType[0];
+        // this.oscType = this.OscillatorType[0];
 
     }
-
-    OscillatorType = [
-        "sine",
-        "square",
-        "sawtooth",
-        "triangle"
-    ];
+    //
+    // OscillatorType = [
+    //     "sine",
+    //     "square",
+    //     "sawtooth",
+    //     "triangle"
+    // ];
 
     public audioOn(msg: MidiMessage) {
 
@@ -112,7 +110,7 @@ export class AudioService {
 
 
         // algorithm.modulator.type = this.oscType;
-        algorithm.carrier.type = this.oscType;
+        // algorithm.carrier.type = this.oscType;
 
 
         let presetList = {

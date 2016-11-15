@@ -3,9 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent }   from '../components/app.component';
-import {MidiService} from '../services/midiService';
-import {AudioService} from '../services/audioService';
-import {NavigatorRef} from '../services/navigatorRef';
+import { WaveComponent } from '../components/wave/wave.component';
+import { MidiService } from '../services/midiService';
+import { AudioService } from '../services/audioService';
+import { NavigatorRef } from '../services/navigatorRef';
 
 @NgModule({
   imports: [
@@ -19,6 +20,7 @@ import {NavigatorRef} from '../services/navigatorRef';
   ],
   declarations: [
     AppComponent,
+    WaveComponent
   ],
   bootstrap: [ AppComponent ]
 })
