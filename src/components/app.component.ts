@@ -14,7 +14,9 @@ import {AudioService} from '../services/audioService';
   <!--<select name="" id="" [(ngModel)]="oscType" (change)="setOscType($event.target.value)">-->
     <!--<option *ngFor="let type of oscillatorType" [value]="type">{{type}}</option>-->
   <!--</select>-->
-  <wave></wave>
+  <wave [analyser]="audioService.analyser" type="time" width="150"></wave>
+  <wave [analyser]="audioService.analyser" type="spectrum" width="150"></wave>
+  
   
   `,
 })
@@ -40,8 +42,6 @@ export class AppComponent {
         // this.oscType = this.audioService.oscType;
 
     }
-
-
 
     onMidiMessage(e: WebMidi.MIDIMessageEvent): void {
         let message = new MidiMessage(e.data);

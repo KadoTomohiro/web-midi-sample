@@ -4,48 +4,45 @@ import {AudioService} from "../../services/audioService";
 @Component({
     selector: 'wave',
     template: `
-      <canvas #timeWave [attr.width]="_size.width" [attr.height]="_size.height"></canvas>
-    `
+      <canvas #wave [attr.width]="width" [attr.height]="height"></canvas>
+    `,
+    styles: ['canvas {border: black solid 1px;}']
 })
 export class WaveComponent implements OnInit {
 
-    // @Input() source: AudioService;
 
-    @ViewChild('timeWave') timeWave: ElementRef;
-    private _size: {width: number, height: number};
+    @Input() analyser: AnalyserNode;
+    @Input() width = 100;
+    @Input() height = 100;
+    @Input() type = AudioService.waveType.time;
+
+    @ViewChild('wave') wave: ElementRef;
 
     interval: Observable<any>;
 
-    constructor(private audio: AudioService) {
-        this._size = {
-            width: 500,
-            height: 200
-        };
+    constructor() {
         this.interval = Observable.interval(50);
     }
 
     ngOnInit() {
-        let canvas = this.timeWave.nativeElement;
-        let canvasContext = canvas.getContext('2d');
+        let waveCanvas = this.wave.nativeElement;
+        let canvasContext = waveCanvas.getContext('2d');
 
         this.interval.subscribe(() => {
 
-            let source = this.audio.getTimeWave();
+            let wave: Uint8Array = AudioService.getWaveSource(this.type, this.analyser);
 
             // Clear previous data
-            canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+            canvasContext.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
             // Draw sound wave
             canvasContext.beginPath();
 
-
-            for (let i = 0, len = source.length; i < len; i++) {
-                let x = (i / len) * canvas.width;
-                let y = (1 - (source[i] / 255)) * canvas.height;
+            for (let i = 0, len = wave.length; i < len; i++) {
+                let x = (i / len) * waveCanvas.width;
+                let y = (1 - (wave[i] / 255)) * waveCanvas.height;
                 if (i === 0) {
-                    // console.log('moveTo');
                     canvasContext.moveTo(x, y);
                 } else {
-                    // console.log('lineTo');
                     canvasContext.lineTo(x, y);
                 }
             }
@@ -53,4 +50,6 @@ export class WaveComponent implements OnInit {
 
         });
     }
+
+
 }
