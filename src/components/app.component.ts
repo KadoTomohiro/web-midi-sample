@@ -30,7 +30,6 @@ export class AppComponent {
     // oscType: string;
 
 
-
     // oscillatorType: Array<string>;
 
     constructor(private midiService: MidiService, private audioService: AudioService) {
@@ -48,7 +47,7 @@ export class AppComponent {
         this.midiStatus = message.status.toString(16);
         this.noteNumber = message.noteNo;
         this.velocity = message.velocity;
-        this.frequency = Math.round(message.frequency * 100)/100;
+        this.frequency = Math.round(message.frequency * 100) / 100;
 
         if (message.statusNo === MidiMessage.NOTE_ON) {
             this.audioService.audioOn(message);

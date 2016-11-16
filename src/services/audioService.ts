@@ -1,14 +1,54 @@
 import {Injectable} from '@angular/core';
-import {MidiMessage} from './midiService'
+import {MidiMessage} from './midiService';
 
 Injectable();
 export class AudioService {
+    // variables
+    static readonly waveType = {
+        time: 'time',
+        spectrum: 'spectrum'
+    };
 
     private ctx: AudioContext;
     private algorithms: Map<number, Algorithm>;
 
     public analyser: AnalyserNode;
-    // oscType: string;
+
+    // functions
+
+    private static getFrequencyKey(msg: MidiMessage): number {
+        return (msg.channelNo << 8) + msg.noteNo;
+    }
+
+    static getTimeWave(analyser: AnalyserNode): Uint8Array {
+        let times = new Uint8Array(analyser.fftSize);
+        analyser.getByteTimeDomainData(times);
+
+        return times;
+    }
+
+    static getSpectrumsWave(analyser: AnalyserNode): Uint8Array {
+        let spectrums = new Uint8Array(analyser.frequencyBinCount);  // Array size is 1024 (half of FFT size)
+        analyser.getByteFrequencyData(spectrums);
+
+        return spectrums;
+    }
+
+    static getWaveSource (type: string, analyser: AnalyserNode): Uint8Array {
+
+        let source: Uint8Array;
+
+        switch (type) {
+            case AudioService.waveType.time:
+                source = AudioService.getTimeWave(analyser);
+                break;
+            case AudioService.waveType.spectrum:
+                source = AudioService.getSpectrumsWave(analyser);
+                break;
+        }
+
+        return source;
+    }
 
     constructor() {
         this.ctx = new AudioContext();
@@ -17,16 +57,7 @@ export class AudioService {
 
         this.analyser.connect(this.ctx.destination);
 
-        // this.oscType = this.OscillatorType[0];
-
     }
-    //
-    // OscillatorType = [
-    //     "sine",
-    //     "square",
-    //     "sawtooth",
-    //     "triangle"
-    // ];
 
     public audioOn(msg: MidiMessage) {
 
@@ -60,14 +91,16 @@ export class AudioService {
         algorithm.carrierGain.gain.linearRampToValueAtTime(c_sustain * carrierRootValue, now + c_attack + c_decay);
         // ▲ c_sustain * carrierRootValueまでc_attack+c_decay秒かけて直線的に変化
 
-        this.algorithms.set(this.getFrequencyKey(msg), algorithm);
+        this.algorithms.set(AudioService.getFrequencyKey(msg), algorithm);
 
     }
 
     public audioOff(msg: MidiMessage) {
 
-        let algorithm: Algorithm = this.algorithms.get(this.getFrequencyKey(msg));
-        if (!algorithm) return;
+        let algorithm: Algorithm = this.algorithms.get(AudioService.getFrequencyKey(msg));
+        if (!algorithm) {
+            return;
+        }
 
         let now = this.ctx.currentTime;
         let m_release = 0.5;
@@ -85,49 +118,12 @@ export class AudioService {
         algorithm.carrierGain.gain.linearRampToValueAtTime(0.0, now + c_release);
 
         let release = m_release;
-        if (release < c_release) release = c_release;
+        if (release < c_release) {
+            release = c_release;
+        }
 
 
         algorithm.stop(now + release);
-    }
-
-    private getFrequencyKey(msg: MidiMessage): number {
-        return (msg.channelNo << 8) + msg.noteNo;
-    }
-
-    static getTimeWave(analyser: AnalyserNode): Uint8Array {
-        let times = new Uint8Array(analyser.fftSize);
-        analyser.getByteTimeDomainData(times);
-
-        return times;
-    }
-
-    static getSpectrumsWave(analyser: AnalyserNode): Uint8Array {
-        var spectrums = new Uint8Array(analyser.frequencyBinCount);  // Array size is 1024 (half of FFT size)
-        analyser.getByteFrequencyData(spectrums);
-
-        return spectrums;
-    }
-
-    static waveType = {
-        time: 'time',
-        spectrum: 'spectrum'
-    };
-
-    static getWaveSource (type: string, analyser: AnalyserNode): Uint8Array {
-
-        let source: Uint8Array;
-
-        switch(type) {
-            case AudioService.waveType.time:
-                source = AudioService.getTimeWave(analyser);
-                break;
-            case AudioService.waveType.spectrum:
-                source = AudioService.getSpectrumsWave(analyser);
-                break;
-        }
-
-        return source;
     }
 
     private createAlgorithm(msg: MidiMessage): Algorithm {
@@ -142,7 +138,7 @@ export class AudioService {
         algorithm.feedbackGain.connect(<AudioNode>algorithm.modulator.frequency);
 
         let presetList = {
-            name: "Elec.Piano1",
+            name: 'Elec.Piano1',
             freqRatio: [1, 9],
             feedback: 0,
             outRatio: [50, 55]
@@ -179,12 +175,12 @@ class Algorithm {
 
     }
 
-    public start(when: number = 0): void {
+    public start(when = 0): void {
         this.modulator.start(when);
         this.carrier.start(when);
     }
 
-    public stop(when: number = 0): void {
+    public stop(when = 0): void {
         this.modulator.stop(when);
         this.carrier.stop(when);
     }
@@ -193,8 +189,8 @@ class Algorithm {
 class Envelope {
 
     constructor(public attack: number,
-                public decay : number,
-                public sustain : number,
+                public decay: number,
+                public sustain: number,
                 public release: number
     ) {}
 
@@ -220,6 +216,6 @@ class Envelope {
                 gain.gain.linearRampToValueAtTime(modulatorRootValue, now);
                 gain.gain.linearRampToValueAtTime(0.0, now + this.release);
             }
-        }
+        };
     }
 }

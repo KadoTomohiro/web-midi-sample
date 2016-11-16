@@ -1,6 +1,6 @@
 import {Component, ViewChild, ElementRef, OnInit, Input} from '@angular/core';
 import {Observable} from 'rxjs';
-import {AudioService} from "../../services/audioService";
+import {AudioService} from '../../services/audioService';
 @Component({
     selector: 'wave',
     template: `

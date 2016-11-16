@@ -24,9 +24,11 @@ export class MidiService {
 
 
 export class MidiMessage {
-  private _message: Uint8Array;
+
   static readonly NOTE_ON = 0x9;
   static readonly NOTE_OFF = 0x8;
+
+  private _message: Uint8Array;
 
   constructor(message: Uint8Array) {
     this._message = message;

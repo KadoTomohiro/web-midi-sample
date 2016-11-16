@@ -13,13 +13,14 @@ module.exports = {
   },
 
   module: {
-    preLoaders: [{
-      test: /\.ts$/,
-      loader: 'tslint',
-      query: {
-        configFileName: 'tsconfig.json'
-      }
-    }],
+    // preLoaders: [{
+    //   test: /\.ts$/,
+    //   exclude: /node_modules/,
+    //   loader: 'tslint-loader',
+    //   query: {
+    //     configFileName: 'tsconfig.json'
+    //   }
+    // }],
     loaders: [
       {
         test: /\.ts$/,
