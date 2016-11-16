@@ -1,0 +1,14 @@
+<div class="connector">
+  <p>Connect to {{connectionPoint.name}}</p>
+  <label for="">Gain</label><input type="range" min="0" max="1000" step="0.1" [(ngModel)]="gain">
+  <span>envelope:</span>
+  <label for="">Attack</label>
+  <input type="number" min="0" max="1.0" step="0.1" [(ngModel)]="attack">
+  <label for="">Decay</label>
+  <input type="number" min="0" max="1.0" step="0.1" [(ngModel)]="decay">
+  <label for="">Sustain</label>
+  <input type="number" min="0" max="1.0" step="0.1" [(ngModel)]="sustain">
+  <label for="">Release</label>
+  <input type="number" min="0" max="1.0" step="0.1" [(ngModel)]="release">
+  <button (click)="onDisconnect($event)">disconnect</button>
+</div>

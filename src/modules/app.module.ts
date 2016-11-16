@@ -4,6 +4,8 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent }   from '../components/app.component';
 import { WaveComponent } from '../components/wave/wave.component';
+import { OperatorComponent } from "../components/operator/operator.component";
+import {ConnectorComponent} from "../components/connector/connector.component";
 import { MidiService } from '../services/midiService';
 import { AudioService } from '../services/audioService';
 import { NavigatorRef } from '../services/navigatorRef';
@@ -20,7 +22,9 @@ import { NavigatorRef } from '../services/navigatorRef';
   ],
   declarations: [
     AppComponent,
-    WaveComponent
+    WaveComponent,
+    OperatorComponent,
+    ConnectorComponent
   ],
   bootstrap: [ AppComponent ]
 })

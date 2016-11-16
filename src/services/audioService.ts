@@ -54,9 +54,7 @@ export class AudioService {
         this.ctx = new AudioContext();
         this.algorithms = new Map<number, Algorithm>();
         this.analyser = this.ctx.createAnalyser();
-
         this.analyser.connect(this.ctx.destination);
-
     }
 
     public audioOn(msg: MidiMessage) {
@@ -65,7 +63,7 @@ export class AudioService {
 
         algorithm.start(0);
 
-        // let envelope = new Envelope(0, 0.5, 0.3, 0.5);
+        let envelope = new Envelope(0, 0.5, 0.3, 0.5);
 
 
 
@@ -126,6 +124,10 @@ export class AudioService {
         algorithm.stop(now + release);
     }
 
+    private createOperator() {
+
+    }
+
     private createAlgorithm(msg: MidiMessage): Algorithm {
 
         let algorithm: Algorithm = new Algorithm(this.ctx);
@@ -139,15 +141,16 @@ export class AudioService {
 
         let presetList = {
             name: 'Elec.Piano1',
-            freqRatio: [1, 9],
+            freqRatio: [50, 3],
             feedback: 0,
-            outRatio: [50, 55]
+
+            outRatio: [90, 90]
         };
         let freq = msg.frequency;
         algorithm.modulator.frequency.value = presetList.freqRatio[1] * freq;
         algorithm.carrier.frequency.value = presetList.freqRatio[0] * freq; // 音階を変える
         algorithm.feedbackGain.gain.value = presetList.feedback;
-        algorithm.modulatorGain.gain.value = (presetList.outRatio[1] / 100) * 1024;
+        algorithm.modulatorGain.gain.value = (presetList.outRatio[1] / 100) * freq * 8;
         algorithm.carrierGain.gain.value = (presetList.outRatio[0] / 100);
 
         return algorithm;
@@ -186,6 +189,30 @@ class Algorithm {
     }
 }
 
+
+class Operator {
+
+
+
+    constructor(private oscillator : OscillatorNode, public analyser: AnalyserNode) {
+        oscillator.connect(analyser);
+    }
+
+    get connector():AudioParam {
+        return this.oscillator.frequency;
+    }
+
+
+}
+
+class Oscillator {
+
+}
+
+class Gain {
+
+}
+
 class Envelope {
 
     constructor(public attack: number,
@@ -194,28 +221,22 @@ class Envelope {
                 public release: number
     ) {}
 
-    setEnvelope (context: AudioContext) {
-
-
-        return {
-            down: (gain: GainNode) => {
-                let now = context.currentTime;
-                let modulatorRootValue = gain.gain.value;  // Attackの目標値をセット
-                gain.gain.cancelScheduledValues(0);      // スケジュールを全て解除
-                gain.gain.setValueAtTime(0.0, now);      // 今時点を音の出始めとする
-                gain.gain.linearRampToValueAtTime(modulatorRootValue, now + this.attack);
-                // ▲ rootValue0までm_attack秒かけて直線的に変化
-                gain.gain.linearRampToValueAtTime(this.sustain * modulatorRootValue, now + this.attack + this.decay);
-                // ▲ m_sustain * modulatorRootValueまでm_attack+m_decay秒かけて直線的に変化
-            },
-            up: (gain) => {
-                let now = context.currentTime;
-                let modulatorRootValue = gain.gain.value;
-                gain.gain.cancelScheduledValues(0);
-                gain.gain.setValueAtTime(modulatorRootValue, now);
-                gain.gain.linearRampToValueAtTime(modulatorRootValue, now);
-                gain.gain.linearRampToValueAtTime(0.0, now + this.release);
-            }
-        };
+    down (context: AudioContext , gain: GainNode) {
+        let now = context.currentTime;
+        let modulatorRootValue = gain.gain.value;  // Attackの目標値をセット
+        gain.gain.cancelScheduledValues(0);      // スケジュールを全て解除
+        gain.gain.setValueAtTime(0.0, now);      // 今時点を音の出始めとする
+        gain.gain.linearRampToValueAtTime(modulatorRootValue, now + this.attack);
+        // ▲ rootValue0までm_attack秒かけて直線的に変化
+        gain.gain.linearRampToValueAtTime(this.sustain * modulatorRootValue, now + this.attack + this.decay);
+        // ▲ m_sustain * modulatorRootValueまでm_attack+m_decay秒かけて直線的に変化
+    }
+    up　(context: AudioContext , gain) {
+        let now = context.currentTime;
+        let modulatorRootValue = gain.gain.value;
+        gain.gain.cancelScheduledValues(0);
+        gain.gain.setValueAtTime(modulatorRootValue, now);
+        gain.gain.linearRampToValueAtTime(modulatorRootValue, now);
+        gain.gain.linearRampToValueAtTime(0.0, now + this.release);
     }
 }

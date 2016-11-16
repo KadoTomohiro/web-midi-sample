@@ -17,7 +17,7 @@ import {AudioService} from '../services/audioService';
   <wave [analyser]="audioService.analyser" type="time" width="150"></wave>
   <wave [analyser]="audioService.analyser" type="spectrum" width="150"></wave>
   
-  
+  <operator></operator>
   `,
 })
 export class AppComponent {

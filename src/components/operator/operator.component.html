@@ -1,0 +1,20 @@
+<div class="operator">
+  <p>{{name}}</p>
+  <div>
+    <label>frequency</label>
+    <input type="range" max="100" min="0" step="1" [(ngModel)]="frequency">
+  </div>
+  <div>
+    <label>new connection</label>
+    <select [(ngModel)]="newConnection">
+      <option *ngFor="let operator of operators" [value]="operator">{{operator}}</option>
+    </select>
+    <button [disabled]="!newConnection" (click)="addCollection()">add connection</button>
+  </div>
+  <ul>
+    <li *ngFor="let connection of connections" class="connector">
+      <connector [connection-point]="connection" (disconnect)="discconect(id)"></connector>
+    </li>
+  </ul>
+</div>
+
