@@ -14,10 +14,8 @@ import {AudioService} from '../services/audioService';
   <!--<select name="" id="" [(ngModel)]="oscType" (change)="setOscType($event.target.value)">-->
     <!--<option *ngFor="let type of oscillatorType" [value]="type">{{type}}</option>-->
   <!--</select>-->
-  <wave [analyser]="audioService.analyser" type="time" width="150"></wave>
-  <wave [analyser]="audioService.analyser" type="spectrum" width="150"></wave>
-  
-  <operator></operator>
+    
+    <synthesizer [message]="message"></synthesizer>
   `,
 })
 export class AppComponent {
@@ -29,10 +27,12 @@ export class AppComponent {
     frequency: number;
     // oscType: string;
 
+    message: MidiMessage;
+
 
     // oscillatorType: Array<string>;
 
-    constructor(private midiService: MidiService, private audioService: AudioService) {
+    constructor(private midiService: MidiService) {
 
 
         this.midiService.midiIn.subscribe((e: WebMidi.MIDIMessageEvent) => this.onMidiMessage(e));
@@ -49,13 +49,8 @@ export class AppComponent {
         this.velocity = message.velocity;
         this.frequency = Math.round(message.frequency * 100) / 100;
 
-        if (message.statusNo === MidiMessage.NOTE_ON) {
-            this.audioService.audioOn(message);
-        }
+        this.message = message;
 
-        if (message.statusNo === MidiMessage.NOTE_OFF) {
-            this.audioService.audioOff(message);
-        }
 
     }
 

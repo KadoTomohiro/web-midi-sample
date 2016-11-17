@@ -14,8 +14,6 @@ export class AudioService {
 
     public analyser: AnalyserNode;
 
-    // functions
-
     private static getFrequencyKey(msg: MidiMessage): number {
         return (msg.channelNo << 8) + msg.noteNo;
     }
@@ -63,15 +61,10 @@ export class AudioService {
 
         algorithm.start(0);
 
-        let envelope = new Envelope(0, 0.5, 0.3, 0.5);
-
-
-
-
         let now = this.ctx.currentTime;
 
-        let m_attack = 0, m_decay = 0.5, m_sustain = 0.3;
-        let c_attack = 0.4, c_decay = 0.3, c_sustain = 0.7;
+        let m_attack = 0, m_decay = 1, m_sustain = 0;
+        let c_attack = 0, c_decay = 1, c_sustain = 0;
 
         let modulatorRootValue = algorithm.modulatorGain.gain.value;  // Attackの目標値をセット
         algorithm.modulatorGain.gain.cancelScheduledValues(0);      // スケジュールを全て解除
@@ -132,19 +125,24 @@ export class AudioService {
 
         let algorithm: Algorithm = new Algorithm(this.ctx);
 
+        algorithm.modulator.connect(algorithm.analyser1);
         algorithm.modulator.connect(algorithm.modulatorGain);
+        // algorithm.modulator.connect(algorithm.analyser1);
+        // algorithm.analyser1.connect(algorithm.modulatorGain);
         algorithm.modulatorGain.connect(<AudioNode>algorithm.carrier.frequency);
         algorithm.carrier.connect(algorithm.carrierGain);
         algorithm.carrierGain.connect(this.analyser);
         algorithm.modulator.connect(algorithm.feedbackGain);
+        // algorithm.carrier.connect(algorithm.analyser1);
+        // algorithm.analyser1.connect(algorithm.modulatorGain);
         algorithm.feedbackGain.connect(<AudioNode>algorithm.modulator.frequency);
 
         let presetList = {
             name: 'Elec.Piano1',
-            freqRatio: [50, 3],
+            freqRatio: [5, 3],
             feedback: 0,
 
-            outRatio: [90, 90]
+            outRatio: [90, 50]
         };
         let freq = msg.frequency;
         algorithm.modulator.frequency.value = presetList.freqRatio[1] * freq;
@@ -166,7 +164,7 @@ class Algorithm {
     public carrierGain: GainNode;
     public feedbackGain: GainNode;
     public feedbackGain2: GainNode;
-
+    public analyser1: AnalyserNode;
 
     constructor(ctx: AudioContext) {
         this.modulator = ctx.createOscillator();
@@ -175,6 +173,7 @@ class Algorithm {
         this.carrierGain = ctx.createGain();
         this.feedbackGain = ctx.createGain();
         this.feedbackGain2 = ctx.createGain();
+        this.analyser1 = ctx.createAnalyser();
 
     }
 
@@ -190,53 +189,3 @@ class Algorithm {
 }
 
 
-class Operator {
-
-
-
-    constructor(private oscillator : OscillatorNode, public analyser: AnalyserNode) {
-        oscillator.connect(analyser);
-    }
-
-    get connector():AudioParam {
-        return this.oscillator.frequency;
-    }
-
-
-}
-
-class Oscillator {
-
-}
-
-class Gain {
-
-}
-
-class Envelope {
-
-    constructor(public attack: number,
-                public decay: number,
-                public sustain: number,
-                public release: number
-    ) {}
-
-    down (context: AudioContext , gain: GainNode) {
-        let now = context.currentTime;
-        let modulatorRootValue = gain.gain.value;  // Attackの目標値をセット
-        gain.gain.cancelScheduledValues(0);      // スケジュールを全て解除
-        gain.gain.setValueAtTime(0.0, now);      // 今時点を音の出始めとする
-        gain.gain.linearRampToValueAtTime(modulatorRootValue, now + this.attack);
-        // ▲ rootValue0までm_attack秒かけて直線的に変化
-        gain.gain.linearRampToValueAtTime(this.sustain * modulatorRootValue, now + this.attack + this.decay);
-        // ▲ m_sustain * modulatorRootValueまでm_attack+m_decay秒かけて直線的に変化
-    }
-    up　(context: AudioContext , gain) {
-        let now = context.currentTime;
-        let modulatorRootValue = gain.gain.value;
-        gain.gain.cancelScheduledValues(0);
-        gain.gain.setValueAtTime(modulatorRootValue, now);
-        gain.gain.linearRampToValueAtTime(modulatorRootValue, now);
-        gain.gain.linearRampToValueAtTime(0.0, now + this.release);
-    }
-}

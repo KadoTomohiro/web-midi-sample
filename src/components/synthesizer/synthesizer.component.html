@@ -1,0 +1,8 @@
+<wave [analyser]="audioService.analyser" type="time" width="150"></wave>
+<wave [analyser]="audioService.analyser" type="spectrum" width="150"></wave>
+<p>
+  <button (click)="addOperator()">add new operator</button>
+</p>
+<div *ngFor="let operator of synthesizerParam.operators">
+  <operator [operator]="operator" [connection-points]="connectionPoints" (connect)="onConnect(operator.uuid, $event)"></operator>
+</div>

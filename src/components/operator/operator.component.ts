@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {UUID} from "angular2-uuid";
+import {IOperatorParams} from "../synthesizer/synthesizer.component";
 
 @Component({
     selector: 'operator',
@@ -8,36 +9,41 @@ import {UUID} from "angular2-uuid";
 })
 export class OperatorComponent {
 
-    @Input() name: string;
-    @Input() operators: Array<string>;
+    @Input() operator: IOperatorParams;
+    @Input('connection-points') connectionPoints: Array<string>;
+
+    @Output() connect: EventEmitter<string>;
+
     newConnection: string;
-    frequency = 1;
-    public connections= new Array<Connection>();
+    // public connections = new Array<Connection>();
 
     constructor() {
-        this.operators = [];
-        this.operators.push('operator1');
-        this.operators.push('operator2');
-        this.operators.push('operator3');
+        this.connect = new EventEmitter();
     }
 
-    addCollection (): void {
-        console.log(this.newConnection);
-        let newConnection = new Connection(this.newConnection);
-        this.connections.push(newConnection);
-        this.newConnection = "";
+    addConnection(): void {
+        this.connect.emit(this.newConnection);
+        // console.log(this.newConnection);
+        // let newConnection = new Connection(this.newConnection);
+        // this.connections.push(newConnection);
+        // this.newConnection = "";
     }
 
     discconect(id: string) {
-        let index = this.connections.findIndex(e => e.id === id);
-        this.connections.splice(index,1);
+        // let index = this.connections.findIndex(e => e.id === id);
+        // this.connections.splice(index, 1);
+    }
+
+    delete() {
+
     }
 
 }
 
 class Connection {
     public id: string;
-    constructor (public name: string) {
+
+    constructor(public name: string) {
         this.id = UUID.UUID();
     }
 }

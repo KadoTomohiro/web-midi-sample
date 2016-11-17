@@ -1,20 +1,21 @@
 <div class="operator">
-  <p>{{name}}</p>
+  <p>{{operator.name}}</p>
   <div>
     <label>frequency</label>
-    <input type="range" max="100" min="0" step="1" [(ngModel)]="frequency">
+    <input type="range" max="100" min="0" step="1" [(ngModel)]="operator.frequency">
   </div>
   <div>
     <label>new connection</label>
     <select [(ngModel)]="newConnection">
-      <option *ngFor="let operator of operators" [value]="operator">{{operator}}</option>
+      <option *ngFor="let connectionPoint of connectionPoints" [value]="connectionPoint.uuid">{{connectionPoint.name}}</option>
     </select>
-    <button [disabled]="!newConnection" (click)="addCollection()">add connection</button>
+    <button [disabled]="!newConnection" (click)="addConnection()">add connection</button>
   </div>
   <ul>
-    <li *ngFor="let connection of connections" class="connector">
-      <connector [connection-point]="connection" (disconnect)="discconect(id)"></connector>
+    <li *ngFor="let connector of operator.connectors" class="connector">
+      <connector [connector]="connection" (disconnect)="discconect(id)"></connector>
     </li>
   </ul>
+  <button (click)="delete()">Delete</button>
 </div>
 

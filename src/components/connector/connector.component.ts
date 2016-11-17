@@ -1,4 +1,5 @@
 import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {IConnectorParam} from "../synthesizer/synthesizer.component";
 
 @Component({
     selector:'connector',
@@ -7,23 +8,19 @@ import {Component, Input, Output, EventEmitter} from "@angular/core";
 })
 export class ConnectorComponent {
 
-    @Input('connection-point') connectionPoint: {id: string,name: string};
+    @Input() connector: IConnectorParam;
     @Output() disconnect: EventEmitter<string>;
-
-    gain = 100;
-    attack = 0.5;
-    decay = 0.5;
-    sustain = 0.5;
-    release = 0.5;
 
     constructor() {
         this.disconnect = new EventEmitter();
     }
 
-
+    onChange($event) {
+        console.log($event);
+    }
 
     onDisconnect() {
-        this.disconnect.emit(this.connectionPoint.id);
+        // this.disconnect.emit(this.connectionPoint.id);
     }
 
 }
