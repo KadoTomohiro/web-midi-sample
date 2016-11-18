@@ -2,7 +2,7 @@
   <p>{{operator.name}}</p>
   <div>
     <label>frequency</label>
-    <input type="range" max="100" min="0" step="1" [(ngModel)]="operator.frequency">
+    <input type="number" max="100" min="0" step="1" [(ngModel)]="operator.frequency" (change)="onChange()">
   </div>
   <div>
     <label>new connection</label>
@@ -13,9 +13,9 @@
   </div>
   <ul>
     <li *ngFor="let connector of operator.connectors" class="connector">
-      <connector [connector]="connection" (disconnect)="discconect(id)"></connector>
+      <connector [connector]="connector" (change)="onChangeConnector($event)" (delete)="onDisconnect($event)"></connector>
     </li>
   </ul>
-  <button (click)="delete()">Delete</button>
+  <button (click)="onDelete()">Delete</button>
 </div>
 

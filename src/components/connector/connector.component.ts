@@ -9,18 +9,42 @@ import {IConnectorParam} from "../synthesizer/synthesizer.component";
 export class ConnectorComponent {
 
     @Input() connector: IConnectorParam;
-    @Output() disconnect: EventEmitter<string>;
+    @Output() change: EventEmitter<IConnectorParam>;
+    @Output() delete: EventEmitter<string>;
+
+    gainValue: number;
+    attack: number;
+    decay: number;
+    sustain: number;
+    release: number;
 
     constructor() {
-        this.disconnect = new EventEmitter();
+        this.change = new EventEmitter<IConnectorParam>();
+        this.delete = new EventEmitter<string>();
     }
 
     onChange($event) {
-        console.log($event);
+
+        let changeParam: IConnectorParam = {
+            uuid: this.connector.uuid,
+            gainValue: this.connector.gainValue,
+            connectionTo:{
+                uuid: this.connector.connectionTo.uuid,
+                name: this.connector.connectionTo.name
+            } ,
+            envelope:{
+                attack: this.connector.envelope.attack,
+                decay: this.connector.envelope.decay,
+                sustain: this.connector.envelope.sustain,
+                release: this.connector.envelope.release
+            }
+        };
+
+        this.change.emit(changeParam);
     }
 
     onDisconnect() {
-        // this.disconnect.emit(this.connectionPoint.id);
+        this.delete.emit(this.connector.uuid);
     }
 
 }

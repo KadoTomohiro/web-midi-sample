@@ -12,15 +12,16 @@ export class SynthesizerComponent implements OnChanges {
 
     @Input() message: MidiMessage;
     synthesizerParam: ISynthesizerParas;
-    distiation: IConnectionPoint;
+    destination: IConnectionPoint;
     connectionPoints: Array<IConnectionPoint>;
 
     private counter = 0;
 
-    constructor(private audioService: AudioService) {
+    constructor(private audio: AudioService) {
+        this.destination = {uuid: UUID.UUID(), name: 'destination'};
         this.synthesizerParam = this.getInitParam();
-        this.distiation = {uuid: UUID.UUID(), name: 'distination'};
-        this.connectionPoints = [this.distiation];
+        this.setConnectionPointList();
+        this.setSynthesizer();
     }
 
     ngOnChanges(changes: {[propKey: string]: SimpleChange}){
@@ -31,10 +32,11 @@ export class SynthesizerComponent implements OnChanges {
         }
         let message = newMessage.currentValue;
         if (message.statusNo === MidiMessage.NOTE_ON) {
-            this.audioService.audioOn(message);
+
+            this.audio.audioOn(message, );
         }
         if (message.statusNo === MidiMessage.NOTE_OFF) {
-            this.audioService.audioOff(message);
+            this.audio.audioOff(message);
         }
     }
 
@@ -42,10 +44,37 @@ export class SynthesizerComponent implements OnChanges {
         let newOperator = this.createNewOperator();
         this.synthesizerParam.operators.push(newOperator);
         this.connectionPoints.push({uuid: newOperator.uuid, name: newOperator.name});
+
+        this.setConnectionPointList();
+        this.setSynthesizer();
+    }
+
+    onChange(operator: IOperatorParams) {
+        let operatorUUID = operator.uuid;
+
+        let operatorIndex = this.synthesizerParam.operators.findIndex(e => e.uuid === operatorUUID);
+
+        this.synthesizerParam.operators[operatorIndex] = operator;
+        this.setSynthesizer();
+    }
+
+    onDelete(operatorUUID: string) {
+        let operatorIndex = this.synthesizerParam.operators.findIndex(e => e.uuid === operatorUUID);
+        this.synthesizerParam.operators.splice(operatorIndex, 1);
+
+        this.setConnectionPointList();
+        this.setSynthesizer();
+    }
+
+    setConnectionPointList() {
+        this.connectionPoints = [this.destination];
+
+        this.synthesizerParam.operators.forEach(e => this.connectionPoints.push({uuid: e.uuid, name: e.name}));
     }
 
     private getInitParam(): ISynthesizerParas {
         return {
+            destinationId: this.destination.uuid,
             operators: [this.createNewOperator()]
         }
     }
@@ -63,13 +92,13 @@ export class SynthesizerComponent implements OnChanges {
         return `Operator${++this.counter}`;
     }
 
-
-
-
-
+    private setSynthesizer(): void {
+        this.audio.param = this.synthesizerParam;
+    }
 }
 
 export interface ISynthesizerParas {
+    destinationId: string;
     operators: Array<IOperatorParams>;
 }
 

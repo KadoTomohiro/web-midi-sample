@@ -10,6 +10,7 @@ import { SynthesizerComponent } from "../components/synthesizer/synthesizer.comp
 import { MidiService } from '../services/midiService';
 import { AudioService } from '../services/audioService';
 import { NavigatorRef } from '../services/navigatorRef';
+// import {Synthesizer} from "../services/synthesizer";
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { NavigatorRef } from '../services/navigatorRef';
   providers: [
     MidiService,
     AudioService,
-    NavigatorRef
+    NavigatorRef,
+    // Synthesizer
   ],
   declarations: [
     AppComponent,

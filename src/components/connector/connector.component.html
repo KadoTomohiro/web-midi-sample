@@ -1,14 +1,14 @@
 <div class="connector">
   <p>Connect to {{connector.connectionTo.name}}</p>
-  <label>Gain</label><input type="range" min="0" max="1000" step="0.1" [value]="connector.gainValue" (change)="onChage($event)">
+  <label>Gain</label><input type="number" min="0" max="1000" step="0.1" [(ngModel)]="connector.gainValue" (change)="onChange($event)">
   <span>envelope:</span>
   <label>Attack</label>
-  <input type="number" min="0" max="1.0" step="0.1" [value]="connector.envelope.attack" (change)="onChage($event)">
+  <input type="number" min="0" max="1.0" step="0.1" [(ngModel)]="connector.envelope.attack" (change)="onChange($event)">
   <label>Decay</label>
-  <input type="number" min="0" max="1.0" step="0.1" [value]="connector.envelope.decay" (change)="onChage($event)">
+  <input type="number" min="0" max="1.0" step="0.1" [(ngModel)]="connector.envelope.decay" (change)="onChange($event)">
   <label>Sustain</label>
-  <input type="number" min="0" max="1.0" step="0.1" [value]="connector.envelope.sustain" (change)="onChage($event)">
+  <input type="number" min="0" max="1.0" step="0.1" [(ngModel)]="connector.envelope.sustain" (change)="onChange($event)">
   <label>Release</label>
-  <input type="number" min="0" max="1.0" step="0.1" [value]="connector.envelope.release" (change)="onChage($event)">
+  <input type="number" min="0" max="1.0" step="0.1" [(ngModel)]="connector.envelope.release" (change)="onChange($event)">
   <button (click)="onDisconnect($event)">disconnect</button>
 </div>
