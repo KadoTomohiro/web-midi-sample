@@ -11,6 +11,7 @@ import {AudioService} from '../services/audioService';
   <p>note number: {{noteNumber}}</p>
   <p>velocity: {{velocity}}</p>
   <p>frequency: {{frequency}}Hz</p>
+  <keyboard (midiMessage)="onMidiMessage($event)"></keyboard>
   <!--<select name="" id="" [(ngModel)]="oscType" (change)="setOscType($event.target.value)">-->
     <!--<option *ngFor="let type of oscillatorType" [value]="type">{{type}}</option>-->
   <!--</select>-->
@@ -35,15 +36,15 @@ export class AppComponent {
     constructor(private midiService: MidiService) {
 
 
-        this.midiService.midiIn.subscribe((e: WebMidi.MIDIMessageEvent) => this.onMidiMessage(e));
+        this.midiService.midiIn.subscribe((e: WebMidi.MIDIMessageEvent) => this.onMidiMessage(e.data));
 
         // this.oscillatorType = audioService.OscillatorType;
         // this.oscType = this.audioService.oscType;
 
     }
 
-    onMidiMessage(e: WebMidi.MIDIMessageEvent): void {
-        let message = new MidiMessage(e.data);
+    onMidiMessage(data: Uint8Array): void {
+        let message = new MidiMessage(data);
         this.midiStatus = message.status.toString(16);
         this.noteNumber = message.noteNo;
         this.velocity = message.velocity;
@@ -53,6 +54,8 @@ export class AppComponent {
 
 
     }
+
+
 
     // setOscType(type):void {
     //     this.audioService.oscType = type;
