@@ -10,6 +10,7 @@ import { SynthesizerComponent } from "../components/synthesizer/synthesizer.comp
 import { MidiService } from '../services/midiService';
 import { AudioService } from '../services/audioService';
 import { NavigatorRef } from '../services/navigatorRef';
+import {KeyboardComponent} from "../components/keyboard/keyboard.component";
 // import {Synthesizer} from "../services/synthesizer";
 
 @NgModule({
@@ -28,7 +29,8 @@ import { NavigatorRef } from '../services/navigatorRef';
     WaveComponent,
     SynthesizerComponent,
     OperatorComponent,
-    ConnectorComponent
+    ConnectorComponent,
+    KeyboardComponent
   ],
   bootstrap: [ AppComponent ]
 })
