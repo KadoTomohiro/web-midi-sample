@@ -1,0 +1,22 @@
+.keys {
+    display: flex;
+    align-content: flex-start;
+}
+
+.key {
+    width: 50px;
+    height: 100px;
+    border: black solid 1px;
+    text-align: center;
+}
+
+.key.white {
+    color: black;
+    background-color: white;
+}
+
+.key.black {
+    color: white;
+    background-color: black;
+}
+

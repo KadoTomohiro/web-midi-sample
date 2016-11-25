@@ -1,0 +1,6 @@
+<div class="keys">
+  <div *ngFor="let key of keys"
+       [ngClass]="{'key': true, 'white':isWhiteKey(key), 'black': isBlackKey(key)}"
+       (mousedown)="keyDown(key)"
+       (mouseup)="keyUp(key)">{{key.note}}</div>
+</div>
